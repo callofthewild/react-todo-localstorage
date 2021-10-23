@@ -67,6 +67,17 @@ function App() {
     setTodo("");
   }
 
+  // function to remove a todo item from the todo array
+  function handleDeleteClick(id) {
+    // here we are filtering, the idea is to remove an item from todo array on a button click
+    const removeItem = todos.filter((todo) => {
+      // return the rest of the todos that don't match the item we are trying to remove
+      return todo.id !== id;
+    });
+    // removeItem returns a new array - so now we are setting todos to the new array
+    setTodos(removeItem);
+  }
+
   return (
     <div className = "App">
       {/* create a form element ad pass the handleFormSubmit function to the form
@@ -93,7 +104,17 @@ function App() {
       to get the value we want to display
       */}
       {todos.map((todo) => (
-        <li key = {todo.id}>{todo.text}</li>
+        // now we are adding a simple button that we can click on 
+        <li key = {todo.id}>
+          {/* Add the function we created above as the onClick handler
+          remember the handleDeleteClick function needs to know which item we want to remove
+          so we need to pass the todo.id to the function needs to the function - also a side note,
+          notice how we are calling the handleDeleteClick, this makes sure we are not
+          running the function on page load, but rather when the button is clicked.
+          */}
+          {todo.text}{" "}
+          <button onClick = {() => handleDeleteClick(todo.id)}>X</button>
+          </li>
       ))}
     </ul>
 

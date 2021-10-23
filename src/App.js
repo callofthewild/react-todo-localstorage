@@ -1,14 +1,40 @@
 import './App.css';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
 function App() {
 
   // need state to keep track of todos
-  const[todos, setTodos] = useState([]);
+  // because localstorage is synchronus - that could slow down the application
+  // instead of using just an empty array as the initial state - we can use a function in its place,
+  // which will be executed on the initial render
+  // reference: https://reactjs.org/docs/hooks-reference.html#lazy-initial-state
+  const[todos, setTodos] = useState(() => {
+    // get the todos from local storage
+    const savedTodos = localStorage.getItem("todos");
+    // if there are todos stored
+    if (savedTodos) {
+      // return the parsed JSON object back to a javascript object
+      return JSON.parse(savedTodos);
+      // otherwise
+    } else {
+      // return an empty array
+      return [];
+    }
+  });
 
   // need state to keep track ov value in the input
   const [todo, setTodo] = useState("");
+
+  // useEffect to run once component mounts
+  useEffect(() => {
+    // localstorage supports storting strings as keys and values
+    // - therefore we cannot store arrays and objects without converting
+    // the object to a string first. JSON.stringify will convert the object into a JSON string
+    localStorage.setItem("todos", JSON.stringify(todos));
+    // add the todos as as a dependency because we want to update
+    // localstorage anytime the todo state changes
+  }, [todos]);
 
   // function to get value of the input and set the new state
   function handleInputChange(e) {
